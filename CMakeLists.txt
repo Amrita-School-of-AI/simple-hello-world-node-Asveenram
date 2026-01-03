@@ -1,22 +1,45 @@
-cmake_minimum_required(VERSION 3.8)
-project(ros2_hello_world)
+#include <chrono>
+#include <functional>
+#include <memory>
+#include <string>
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
+#include "rclcpp/rclcpp.hpp"
 
-# find dependencies
-find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
+using namespace std::chrono_literals;
 
-# TODO: Add the executable target named 'hello_node'
-# 1. Add executable using src/hello_node.cpp
-# 2. Add dependencies (ament_target_dependencies) for rclcpp
-# 3. Install the target to the DESTINATION lib/${PROJECT_NAME}
+/*
+ * TODO: Create a Class named 'HelloNode' that inherits from rclcpp::Node.
+ * Requirements:
+ * 1. The constructor should name the node "hello_world_node".
+ * 2. Create a timer that triggers every 1000ms (1 second).
+ * 3. The timer callback should print "Hello, World!" using the RCLCPP_INFO macro.
+ */
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
+class HelloNode : public rclcpp::Node
+{
+public:
+  HelloNode()
+  : Node("hello_world_node")
+  {
+    // TODO: Initialize the timer here
+    timer_ = this->create_wall_timer(
+      1000ms, std::bind(&HelloNode::timer_callback, this));
+  }
 
-ament_package()
+private:
+  // TODO: Define the timer_callback function here
+  void timer_callback()
+  {
+    RCLCPP_INFO(this->get_logger(), "Hello, World!");
+  }
+
+  rclcpp::TimerBase::SharedPtr timer_;
+};
+
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<HelloNode>());
+  rclcpp::shutdown();
+  return 0;
+}
