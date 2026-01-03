@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include <chrono>
 #include <functional>
 #include <memory>
@@ -23,10 +22,16 @@ public:
   : Node("hello_world_node")
   {
     // TODO: Initialize the timer here
+    timer_ = this->create_wall_timer(
+      1000ms, std::bind(&HelloNode::timer_callback, this));
   }
 
 private:
   // TODO: Define the timer_callback function here
+  void timer_callback()
+  {
+    RCLCPP_INFO(this->get_logger(), "Hello, World!");
+  }
 
   rclcpp::TimerBase::SharedPtr timer_;
 };
@@ -37,35 +42,4 @@ int main(int argc, char * argv[])
   rclcpp::spin(std::make_shared<HelloNode>());
   rclcpp::shutdown();
   return 0;
-=======
-#include "rclcpp/rclcpp.hpp"
-#include <chrono>
-
-using namespace std::chrono_literals;
-
-// Implement a class HelloNode that inherits from rclcpp::Node
-class HelloNode : public rclcpp::Node {
-public:
-    HelloNode() : Node("hello_world_node") {
-        // Create a timer that fires every 1000ms
-        timer_ = this->create_wall_timer(
-            1000ms, std::bind(&HelloNode::timer_callback, this));
-    }
-
-private:
-    // Inside the timer callback, use RCLCPP_INFO to print "Hello, World!"
-    void timer_callback() {
-        RCLCPP_INFO(this->get_logger(), "Hello, World!");
-    }
-
-    rclcpp::TimerBase::SharedPtr timer_;
-};
-
-int main(int argc, char ** argv) {
-    rclcpp::init(argc, argv);
-    // Spin the node so the timer can fire
-    rclcpp::spin(std::make_shared<HelloNode>());
-    rclcpp::shutdown();
-    return 0;
->>>>>>> c718dbe (Complete ROS2 Hello World assignment)
 }
